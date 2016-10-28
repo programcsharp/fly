@@ -33,18 +33,25 @@ public class Player : MonoBehaviour
     {
         if (coll.gameObject.tag == "EnemyShot")
         {
-            Destroy(gameObject);
-
-            Destroy(coll.collider.gameObject);
-
             if (DeathParticles != null)
             {
                 var particles = Instantiate(DeathParticles, transform.position, Quaternion.identity);
 
                 var obj = ((GameObject)particles);
+
+                obj.GetComponent<Rigidbody2D>().velocity = new Vector2(Input.GetAxis("Horizontal") * 5, 0);
+
+                var force = obj.GetComponent<ParticleSystem>().forceOverLifetime;
+
+                force.enabled = true;
+                force.x = new ParticleSystem.MinMaxCurve(Input.GetAxis("Horizontal") * -10);
             }
 
             GameSystem.instance.YoureDead();
+
+            Destroy(gameObject);
+
+            Destroy(coll.collider.gameObject);
         }
     }
 }

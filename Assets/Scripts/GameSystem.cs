@@ -29,7 +29,7 @@ public class GameSystem : MonoBehaviour
         if (instance == null)
             instance = this;
 
-        Physics.IgnoreLayerCollision(8, 8);
+        Physics2D.IgnoreLayerCollision(8, 8);
 
         _container = new GameObject();
 
@@ -50,7 +50,6 @@ public class GameSystem : MonoBehaviour
 
                 obj.transform.parent = _container.transform;
                 obj.transform.position = new Vector3(x * 2, y * 2);
-                obj.layer = 8;
                 
                 _enemies[x, y - 5] = obj;
             }
