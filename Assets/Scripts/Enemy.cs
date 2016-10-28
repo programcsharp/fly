@@ -20,6 +20,8 @@ public class Enemy : MonoBehaviour
     {
         if (coll.gameObject.tag == "PlayerShot")
         {
+            GameSystem.instance.GotOne(gameObject);
+
             Destroy(gameObject);
 
             Destroy(coll.collider.gameObject);

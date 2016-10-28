@@ -1,20 +1,34 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameSystem : MonoBehaviour
 {
+    public Text Lives;
+    public Text Score;
+
     public GameObject Player;
     public GameObject[] Sprites;
 
     public GameObject EnemyShot;
 
+    GameObject _player;
+
     GameObject _container;
 
     GameObject[,] _enemies;
 
+    int _score = 0;
+    int _lives = 3;
+
+    public static GameSystem instance = null;
+
     // Use this for initialization
     void Start()
     {
+        if (instance == null)
+            instance = this;
+
         Physics.IgnoreLayerCollision(8, 8);
 
         _container = new GameObject();
@@ -42,6 +56,7 @@ public class GameSystem : MonoBehaviour
             }
         }
 
+        NewLife();
     }
 
     // Update is called once per frame
@@ -63,9 +78,9 @@ public class GameSystem : MonoBehaviour
             rigidbody.velocity = new Vector2(-2, 0);
         }
 
-        if (Random.value < 0.05)
+        if (UnityEngine.Random.value < 0.05)
         {
-            var x = Random.Range(0, 9);
+            var x = UnityEngine.Random.Range(0, 9);
 
             for (var y = 0; y < 5; y++)
             {
@@ -83,6 +98,37 @@ public class GameSystem : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void YoureDead()
+    {
+        _lives--;
+
+        UpdateStatusDisplay();
+
+        if (_lives > 0)
+            Invoke("NewLife", 2);
+    }
+
+    public void GotOne(GameObject enemy)
+    {
+        _score += 350;
+
+        UpdateStatusDisplay();
+    }
+
+    public void UpdateStatusDisplay()
+    {
+        Lives.text = _lives.ToString();
+        Score.text = _score.ToString();
+    }
+
+    public void NewLife()
+    {
+        _player = Instantiate<GameObject>(Player);
+        _player.transform.position = new Vector3(9.5f, 0);
+
+        UpdateStatusDisplay();
     }
 
     // http://answers.unity3d.com/questions/296347/move-transform-to-target-in-x-seconds.html

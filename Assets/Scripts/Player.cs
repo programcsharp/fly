@@ -43,6 +43,8 @@ public class Player : MonoBehaviour
 
                 var obj = ((GameObject)particles);
             }
+
+            GameSystem.instance.YoureDead();
         }
     }
 }
