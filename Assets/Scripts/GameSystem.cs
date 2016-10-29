@@ -13,6 +13,7 @@ public class GameSystem : MonoBehaviour
 {
     public Text LivesText;
     public Text ScoreText;
+    public Text WaveText;
     public Text StartText;
     public Text GameOverText;
 
@@ -29,6 +30,7 @@ public class GameSystem : MonoBehaviour
 
     int _score = 0;
     int _lives = 3;
+    int _wave = 0;
 
     public bool _isPlaying = false;
 
@@ -44,11 +46,25 @@ public class GameSystem : MonoBehaviour
 
         _container = new GameObject();
 
-        _container.transform.position = new Vector3(0, 5, 0);
-
         var rigidbody = _container.AddComponent<Rigidbody2D>();
 
         rigidbody.isKinematic = true;
+
+        CreateEnemies();
+
+        Time.timeScale = 0;
+        GameOverText.enabled = false;
+
+        if (TrapperKeeper.IsRestartLevel)
+            StartGame();
+    }
+
+    void CreateEnemies()
+    {
+        _container.transform.position = new Vector3(0, 5, 0);
+
+        var rigidbody = _container.GetComponent<Rigidbody2D>();
+
         rigidbody.velocity = new Vector2(-2, 0);
 
         _enemies = new GameObject[10, 5];
@@ -61,16 +77,17 @@ public class GameSystem : MonoBehaviour
 
                 obj.transform.parent = _container.transform;
                 obj.transform.position = new Vector3(x * 2, y * 2);
-                
+
                 _enemies[x, y - 5] = obj;
             }
         }
 
-        Time.timeScale = 0;
-        GameOverText.enabled = false;
+        _wave++;
 
-        if (TrapperKeeper.IsRestartLevel)
-            StartGame();
+        if (_wave > 1)
+            Time.timeScale += 0.1f;
+
+        UpdateStatusDisplay();
     }
 
     // Update is called once per frame
@@ -114,6 +131,26 @@ public class GameSystem : MonoBehaviour
                     }
                 }
             }
+
+            bool allDead = true;
+
+            for (int y = 0; y < 5; y++)
+            {
+                for (int x = 0; x < 10; x++)
+                {
+                    var enemy = _enemies[x, y];
+                
+                    if (enemy != null && enemy.activeInHierarchy)
+                    {
+                        allDead = false;
+
+                        break;
+                    }
+                }
+            }
+
+            if (allDead)
+                CreateEnemies();
         }
         else if (Input.GetButtonDown("Fire1"))
         {
@@ -132,6 +169,8 @@ public class GameSystem : MonoBehaviour
     {
         _lives = 3;
         _score = 0;
+        _wave = 1;
+
         _isPlaying = true;
         Time.timeScale = 1;
 
@@ -173,6 +212,7 @@ public class GameSystem : MonoBehaviour
     {
         LivesText.text = _lives.ToString();
         ScoreText.text = _score.ToString();
+        WaveText.text = _wave.ToString();
     }
 
     public void NewLife()
