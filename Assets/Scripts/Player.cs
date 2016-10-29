@@ -15,17 +15,20 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float x = transform.position.x + Input.GetAxis("Horizontal") * Speed;
-
-        transform.position = new Vector3(Mathf.Clamp(x, -8, 26), transform.position.y, transform.position.z);
-
-        if (Input.GetButtonDown("Fire1"))
+        if (GameSystem.instance._isPlaying)
         {
-            var shot = Instantiate<GameObject>(Shot);
+            float x = transform.position.x + Input.GetAxis("Horizontal") * Speed;
 
-            shot.transform.position = new Vector3(transform.position.x, transform.position.y + 1, transform.position.z);
+            transform.position = new Vector3(Mathf.Clamp(x, -8, 26), transform.position.y, transform.position.z);
 
-            shot.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 20);
+            if (Input.GetButtonDown("Fire1"))
+            {
+                var shot = Instantiate<GameObject>(Shot);
+
+                shot.transform.position = new Vector3(transform.position.x, transform.position.y + 1, transform.position.z);
+
+                shot.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 20);
+            }
         }
     }
 

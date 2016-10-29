@@ -1,11 +1,20 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+
+public static class TrapperKeeper
+{
+    public static bool IsRestartLevel = false;
+}
 
 public class GameSystem : MonoBehaviour
 {
-    public Text Lives;
-    public Text Score;
+    public Text LivesText;
+    public Text ScoreText;
+    public Text StartText;
+    public Text GameOverText;
 
     public GameObject Player;
     public GameObject[] Sprites;
@@ -21,12 +30,14 @@ public class GameSystem : MonoBehaviour
     int _score = 0;
     int _lives = 3;
 
-    public static GameSystem instance = null;
+    public bool _isPlaying = false;
+
+    public static GameSystem instance;
 
     // Use this for initialization
     void Start()
     {
-        if (instance == null)
+        if (instance != this)
             instance = this;
 
         Physics2D.IgnoreLayerCollision(8, 8);
@@ -55,48 +66,80 @@ public class GameSystem : MonoBehaviour
             }
         }
 
-        NewLife();
+        Time.timeScale = 0;
+        GameOverText.enabled = false;
+
+        if (TrapperKeeper.IsRestartLevel)
+            StartGame();
     }
 
     // Update is called once per frame
     void Update()
     {
-        var rigidbody = _container.GetComponent<Rigidbody2D>();
-
-        // handle if side enemies are all killed and go over further?
-        if (_container.transform.position.x < -7 && rigidbody.velocity.x < 0)
+        if (_isPlaying)
         {
-            StartCoroutine(MoveYOverSeconds(_container, _container.transform.position.y - 1, .15f));
+            var rigidbody = _container.GetComponent<Rigidbody2D>();
 
-            rigidbody.velocity = new Vector2(2, 0);
-        }
-        else if (_container.transform.position.x > 8 && rigidbody.velocity.x > 0)
-        {
-            StartCoroutine(MoveYOverSeconds(_container, _container.transform.position.y - 1, .15f));
-
-            rigidbody.velocity = new Vector2(-2, 0);
-        }
-
-        if (UnityEngine.Random.value < 0.05)
-        {
-            var x = UnityEngine.Random.Range(0, 9);
-
-            for (var y = 0; y < 5; y++)
+            // handle if side enemies are all killed and go over further?
+            if (_container.transform.position.x < -7 && rigidbody.velocity.x < 0)
             {
-                var enemy = _enemies[x, y];
+                StartCoroutine(MoveYOverSeconds(_container, _container.transform.position.y - 1, .15f));
 
-                if (enemy != null && _enemies[x, y].activeInHierarchy)
+                rigidbody.velocity = new Vector2(2, 0);
+            }
+            else if (_container.transform.position.x > 8 && rigidbody.velocity.x > 0)
+            {
+                StartCoroutine(MoveYOverSeconds(_container, _container.transform.position.y - 1, .15f));
+
+                rigidbody.velocity = new Vector2(-2, 0);
+            }
+
+            if (UnityEngine.Random.value < 0.05)
+            {
+                var x = UnityEngine.Random.Range(0, 9);
+
+                for (var y = 0; y < 5; y++)
                 {
-                    var shot = Instantiate<GameObject>(EnemyShot);
+                    var enemy = _enemies[x, y];
 
-                    shot.transform.position = new Vector3(enemy.transform.position.x, enemy.transform.position.y - 1, enemy.transform.position.z);
+                    if (enemy != null && _enemies[x, y].activeInHierarchy)
+                    {
+                        var shot = Instantiate<GameObject>(EnemyShot);
 
-                    shot.GetComponent<Rigidbody2D>().velocity = new Vector2(0, -15);
+                        shot.transform.position = new Vector3(enemy.transform.position.x, enemy.transform.position.y - 1, enemy.transform.position.z);
 
-                    break;
+                        shot.GetComponent<Rigidbody2D>().velocity = new Vector2(0, -15);
+
+                        break;
+                    }
                 }
             }
         }
+        else if (Input.GetButtonDown("Fire1"))
+        {
+            if (_lives > 0)
+                StartGame();
+            else
+            {
+                TrapperKeeper.IsRestartLevel = true;
+
+                SceneManager.LoadScene("GameScene");
+            }
+        }
+    }
+
+    void StartGame()
+    {
+        _lives = 3;
+        _score = 0;
+        _isPlaying = true;
+        Time.timeScale = 1;
+
+        NewLife();
+
+        StartText.enabled = false;
+
+        TrapperKeeper.IsRestartLevel = false;
     }
 
     public void YoureDead()
@@ -107,6 +150,16 @@ public class GameSystem : MonoBehaviour
 
         if (_lives > 0)
             Invoke("NewLife", 2);
+        else
+            GameOver();
+    }
+
+    private void GameOver()
+    {
+        _isPlaying = false;
+        GameOverText.enabled = true;
+
+        StartCoroutine(FreezeOverSeconds(2, () => StartText.enabled = true));
     }
 
     public void GotOne(GameObject enemy)
@@ -118,8 +171,8 @@ public class GameSystem : MonoBehaviour
 
     public void UpdateStatusDisplay()
     {
-        Lives.text = _lives.ToString();
-        Score.text = _score.ToString();
+        LivesText.text = _lives.ToString();
+        ScoreText.text = _score.ToString();
     }
 
     public void NewLife()
@@ -146,5 +199,25 @@ public class GameSystem : MonoBehaviour
         }
 
         objectToMove.transform.position = new Vector3(objectToMove.transform.position.x, endY);
+    }
+
+    public static IEnumerator FreezeOverSeconds(float seconds, Action onComplete = null)
+    {
+        float elapsedTime = 0;
+        float startingScale = Time.timeScale;
+
+        while (elapsedTime < seconds)
+        {
+            Time.timeScale = Mathf.Lerp(startingScale, 0, (elapsedTime / seconds));
+
+            elapsedTime += Time.unscaledDeltaTime;
+
+            yield return new WaitForEndOfFrame();
+        }
+
+        Time.timeScale = 0;
+
+        if (onComplete != null)
+            onComplete();
     }
 }
