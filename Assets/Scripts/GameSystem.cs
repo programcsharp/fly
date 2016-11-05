@@ -19,6 +19,7 @@ public class GameSystem : MonoBehaviour
 
     public GameObject Player;
     public GameObject[] Sprites;
+    public GameObject Bossman;
 
     public GameObject EnemyShot;
 
@@ -132,6 +133,16 @@ public class GameSystem : MonoBehaviour
                 }
             }
 
+            if (_container.transform.position.y < 4 && UnityEngine.Random.value < 0.002)
+            {
+                var boss = Instantiate<GameObject>(Bossman);
+
+                bool isLeft = UnityEngine.Random.value <= 0.5;
+                boss.transform.position = new Vector3(isLeft ? -9 : 26, 18);
+
+                boss.GetComponent<Rigidbody2D>().velocity = new Vector2((isLeft ? 1 : -1) * 10, 0);
+            }
+
             bool allDead = true;
 
             for (int y = 0; y < 5; y++)
@@ -201,9 +212,9 @@ public class GameSystem : MonoBehaviour
         StartCoroutine(FreezeOverSeconds(2, () => StartText.enabled = true));
     }
 
-    public void GotOne(GameObject enemy)
+    public void GotOne(GameObject enemy, int scoreValue = 50)
     {
-        _score += 350;
+        _score += scoreValue;
 
         UpdateStatusDisplay();
     }

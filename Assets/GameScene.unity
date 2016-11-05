@@ -424,6 +424,7 @@ MonoBehaviour:
   - {fileID: 1000011675974936, guid: 162b1367eb4fd7940b1c402917c5ef63, type: 2}
   - {fileID: 1000010213164368, guid: 13a4ca398991aef42b0a4a3cc2e3484b, type: 2}
   - {fileID: 1000013163607524, guid: 83e523b8e0c18734f884b7d32e0bbb00, type: 2}
+  Bossman: {fileID: 1000011777839796, guid: 2bd0cf6f3ef95be439735a54e9d194f0, type: 2}
   EnemyShot: {fileID: 1000011822585060, guid: f1d3355c483e8f84fbaf40872bd0d6b4, type: 2}
   _isPlaying: 0
 --- !u!4 &676361094
