@@ -23,6 +23,9 @@ public class GameSystem : MonoBehaviour
 
     public GameObject EnemyShot;
 
+    public AudioSource GameOverSound;
+    public AudioSource BackgroundMusic;
+
     GameObject _player;
 
     GameObject _container;
@@ -189,6 +192,8 @@ public class GameSystem : MonoBehaviour
 
         StartText.enabled = false;
 
+        BackgroundMusic.Play(1);
+
         TrapperKeeper.IsRestartLevel = false;
     }
 
@@ -206,10 +211,17 @@ public class GameSystem : MonoBehaviour
 
     private void GameOver()
     {
+        BackgroundMusic.Stop();
+
         _isPlaying = false;
         GameOverText.enabled = true;
 
-        StartCoroutine(FreezeOverSeconds(2, () => StartText.enabled = true));
+        GameOverSound.PlayDelayed(0.25f);
+
+        StartCoroutine(FreezeOverSeconds(2, () =>
+        {
+            StartText.enabled = true;
+        }));
     }
 
     public void GotOne(GameObject enemy, int scoreValue = 50)
