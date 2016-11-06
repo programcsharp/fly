@@ -37,6 +37,7 @@ public class GameSystem : MonoBehaviour
     int _wave = 0;
 
     public bool _isPlaying = false;
+    public bool _isCreatingEnemies = false;
 
     public static GameSystem instance;
 
@@ -92,6 +93,8 @@ public class GameSystem : MonoBehaviour
             Time.timeScale += 0.1f;
 
         UpdateStatusDisplay();
+
+        _isCreatingEnemies = false;
     }
 
     // Update is called once per frame
@@ -99,6 +102,9 @@ public class GameSystem : MonoBehaviour
     {
         if (_isPlaying)
         {
+            if (_isCreatingEnemies)
+                return;
+            
             var rigidbody = _container.GetComponent<Rigidbody2D>();
 
             // handle if side enemies are all killed and go over further?
@@ -164,7 +170,11 @@ public class GameSystem : MonoBehaviour
             }
 
             if (allDead)
-                CreateEnemies();
+            {
+                _isCreatingEnemies = true;
+
+                Invoke("CreateEnemies", 1);
+            }
         }
         else if (Input.GetButtonDown("Fire1"))
         {
@@ -192,7 +202,7 @@ public class GameSystem : MonoBehaviour
 
         StartText.enabled = false;
 
-        BackgroundMusic.Play(1);
+        BackgroundMusic.PlayDelayed(1);
 
         TrapperKeeper.IsRestartLevel = false;
     }
