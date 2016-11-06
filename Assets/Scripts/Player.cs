@@ -17,11 +17,11 @@ public class Player : MonoBehaviour
     {
         if (GameSystem.instance._isPlaying)
         {
-            float x = transform.position.x + Input.GetAxis("Horizontal") * Speed;
+            float x = transform.position.x + Input.GetAxis("Horizontal") * Speed;// + Input.gyro.attitude.x * Speed;
 
             transform.position = new Vector3(Mathf.Clamp(x, -8, 26), transform.position.y, transform.position.z);
 
-            if (Input.GetButtonDown("Fire1"))
+            if (Input.GetButtonDown("Fire1"))// || Input.GetMouseButtonDown(0) || Input.touches.Any(a => a.phase == TouchPhase.Began))
             {
                 var shot = Instantiate<GameObject>(Shot);
 

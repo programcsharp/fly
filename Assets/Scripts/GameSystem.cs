@@ -146,7 +146,7 @@ public class GameSystem : MonoBehaviour
                 Invoke("CreateEnemies", 1);
             }
         }
-        else if (Input.GetButtonDown("Fire1"))
+        else if (Input.GetButtonDown("Fire1"))// || Input.GetMouseButtonDown(0) || Input.touches.Any(a => a.phase == TouchPhase.Began))
         {
             if (_lives > 0)
                 StartGame();

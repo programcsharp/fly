@@ -91,14 +91,14 @@ public class Bunker : MonoBehaviour
                 py = cy + y;
                 ny = cy - y;
 
-                if (px > 0 && px < tex.width && py >= 0 && py < tex.height)
+                if (px >= 0 && px < tex.width && py >= 0 && py < tex.height)
                     tex.SetPixel(px, py, col);
-                if (nx > 0 && nx < tex.width && py >= 0 && py < tex.height)
+                if (nx >= 0 && nx < tex.width && py >= 0 && py < tex.height)
                     tex.SetPixel(nx, py, col);
 
-                if (px > 0 && px < tex.width && ny >= 0 && ny < tex.height)
+                if (px >= 0 && px < tex.width && ny >= 0 && ny < tex.height)
                     tex.SetPixel(px, ny, col);
-                if (nx > 0 && nx < tex.width && ny >= 0 && ny < tex.height)
+                if (nx >= 0 && nx < tex.width && ny >= 0 && ny < tex.height)
                     tex.SetPixel(nx, ny, col);
 
             }
