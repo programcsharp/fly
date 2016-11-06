@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: d629848b686c1924e96a4174d8a28cce
-timeCreated: 1478367972
+timeCreated: 1478447723
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -14,6 +14,7 @@ TextureImporter:
     21300014: Me
     21300016: MeAsplode
     21300018: Shoot
+    21300020: Bunker
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -29,7 +30,7 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
-  isReadable: 0
+  isReadable: 1
   grayScaleToAlpha: 0
   generateCubemap: 0
   cubemapConvolution: 0
@@ -57,7 +58,7 @@ TextureImporter:
   spritePixelsToUnits: 16
   alphaIsTransparency: 1
   spriteTessellationDetail: -1
-  textureType: 8
+  textureType: 5
   buildTargetSettings: []
   spriteSheet:
     serializedVersion: 2
@@ -187,6 +188,19 @@ TextureImporter:
         y: 80
         width: 6
         height: 12
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Bunker
+      rect:
+        serializedVersion: 2
+        x: 45
+        y: 124
+        width: 44
+        height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}

@@ -20,6 +20,7 @@ public class GameSystem : MonoBehaviour
     public GameObject Player;
     public GameObject[] Sprites;
     public GameObject Bossman;
+    public GameObject Bunker;
 
     public GameObject EnemyShot;
 
@@ -121,37 +122,6 @@ public class GameSystem : MonoBehaviour
                 rigidbody.velocity = new Vector2(-2, 0);
             }
 
-            if (UnityEngine.Random.value < 0.05)
-            {
-                var x = UnityEngine.Random.Range(0, 9);
-
-                for (var y = 0; y < 5; y++)
-                {
-                    var enemy = _enemies[x, y];
-
-                    if (enemy != null && _enemies[x, y].activeInHierarchy)
-                    {
-                        var shot = Instantiate<GameObject>(EnemyShot);
-
-                        shot.transform.position = new Vector3(enemy.transform.position.x, enemy.transform.position.y - 1, enemy.transform.position.z);
-
-                        shot.GetComponent<Rigidbody2D>().velocity = new Vector2(0, -15);
-
-                        break;
-                    }
-                }
-            }
-
-            if (_container.transform.position.y < 4 && UnityEngine.Random.value < 0.002)
-            {
-                var boss = Instantiate<GameObject>(Bossman);
-
-                bool isLeft = UnityEngine.Random.value <= 0.5;
-                boss.transform.position = new Vector3(isLeft ? -9 : 26, 18);
-
-                boss.GetComponent<Rigidbody2D>().velocity = new Vector2((isLeft ? 1 : -1) * 10, 0);
-            }
-
             bool allDead = true;
 
             for (int y = 0; y < 5; y++)
@@ -189,6 +159,43 @@ public class GameSystem : MonoBehaviour
         }
     }
 
+    void SpawnEnemyShot()
+    {
+        if (UnityEngine.Random.value < 0.5)
+        {
+            var x = UnityEngine.Random.Range(0, 9);
+
+            for (var y = 0; y < 5; y++)
+            {
+                var enemy = _enemies[x, y];
+
+                if (enemy != null && _enemies[x, y].activeInHierarchy)
+                {
+                    var shot = Instantiate<GameObject>(EnemyShot);
+
+                    shot.transform.position = new Vector3(enemy.transform.position.x, enemy.transform.position.y - 1, enemy.transform.position.z);
+
+                    shot.GetComponent<Rigidbody2D>().velocity = new Vector2(0, -15);
+
+                    break;
+                }
+            }
+        }
+    }
+
+    void SpawnBoss()
+    {
+        if (_container.transform.position.y < 4 && UnityEngine.Random.value < 0.8)
+        {
+            var boss = Instantiate<GameObject>(Bossman);
+
+            bool isLeft = UnityEngine.Random.value <= 0.5;
+            boss.transform.position = new Vector3(isLeft ? -9 : 26, 18);
+
+            boss.GetComponent<Rigidbody2D>().velocity = new Vector2((isLeft ? 1 : -1) * 10, 0);
+        }
+    }
+
     void StartGame()
     {
         _lives = 3;
@@ -202,7 +209,17 @@ public class GameSystem : MonoBehaviour
 
         StartText.enabled = false;
 
+        for (int x = 0; x < 6; x++)
+        {
+            var obj = Instantiate<GameObject>(Bunker);
+
+            obj.transform.position = new Vector3(-6 + x * 6, 2);
+        }
+
         BackgroundMusic.PlayDelayed(1);
+
+        InvokeRepeating("SpawnBoss", 15, 15);
+        InvokeRepeating("SpawnEnemyShot", 3, .1f);
 
         TrapperKeeper.IsRestartLevel = false;
     }
@@ -251,7 +268,7 @@ public class GameSystem : MonoBehaviour
     public void NewLife()
     {
         _player = Instantiate<GameObject>(Player);
-        _player.transform.position = new Vector3(9.5f, 0);
+        _player.transform.position = new Vector3(9.5f, -2);
 
         UpdateStatusDisplay();
     }

@@ -26,20 +26,25 @@ public class Enemy : MonoBehaviour
 
             Destroy(coll.collider.gameObject);
 
-            if (DeathParticles != null)
-            {
-                var particles = Instantiate(DeathParticles, transform.position, Quaternion.identity);
+            ShowDeath();
+        }
+    }
 
-                var obj = ((GameObject)particles);
-                
-                obj.transform.parent = transform.parent;
+    public void ShowDeath()
+    {
+        if (DeathParticles != null)
+        {
+            var particles = Instantiate(DeathParticles, transform.position, Quaternion.identity);
 
-                var v = transform.parent.GetComponent<Rigidbody2D>().velocity;
-                var force = obj.GetComponent<ParticleSystem>().forceOverLifetime;
+            var obj = ((GameObject)particles);
 
-                force.enabled = true;
-                force.x = new ParticleSystem.MinMaxCurve(-v.x * 2);
-            }
+            obj.transform.parent = transform.parent;
+
+            var v = transform.parent.GetComponent<Rigidbody2D>().velocity;
+            var force = obj.GetComponent<ParticleSystem>().forceOverLifetime;
+
+            force.enabled = true;
+            force.x = new ParticleSystem.MinMaxCurve(-v.x * 2);
         }
     }
 }
